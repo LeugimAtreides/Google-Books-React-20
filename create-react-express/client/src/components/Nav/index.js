@@ -2,9 +2,9 @@ import React from "react";
 
 function Nav() {
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-info justify-content-center">
       <a className="navbar-brand" href="/">
-        React Reading List
+        Google Book Search by M. E. Villarreal
       </a>
     </nav>
   );
