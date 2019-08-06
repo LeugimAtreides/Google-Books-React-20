@@ -111,7 +111,7 @@ handleBookSave = id => {
                     >
                       <Col size="xs-3 sm-2">
                         <Button
-                          onClick={() => this.handleSaveBook(book.id)}
+                          onClick={() => this.handleBookSave(book.id)}
                           type="success"
                           className="input-lg"
                         >

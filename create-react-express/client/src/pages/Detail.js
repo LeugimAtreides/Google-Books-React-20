@@ -37,17 +37,18 @@ class Detail extends Component {
         <Col size="md-12">
             <Jumbotron>
               <h1>Books On My List</h1>
+              {console.log(this.state.books)}
             </Jumbotron>
             {this.state.books.length ? (
               <List>
                 {this.state.books.map(book => (
-                  <ListItem key={book._id}>
+                  <ListItem key={book.googleId}>
                     <Link to={"/books/" + book._id}>
                       <strong>
-                        {book.title} by {book.author}
+                        {book.title} by {book.authors}
                       </strong>
                     </Link>
-                    <DeleteBtn onClick={() => this.deleteBook(book._id)} />
+                    <DeleteBtn onClick={() => this.deleteBook(book.googleId)} />
                   </ListItem>
                 ))}
               </List>
