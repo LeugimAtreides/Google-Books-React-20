@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-
+//Require all of the dependencies
 const mongoose = require("mongoose");
 const routes = require("./routes");
 const app = express();
