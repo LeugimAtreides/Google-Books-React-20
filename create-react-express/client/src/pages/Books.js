@@ -59,7 +59,7 @@ handleBookSave = id => {
     authors: book.volumeInfo.authors,
     description: book.volumeInfo.description,
     image: book.volumeInfo.imageLinks.thumbnail
-  })
+  }).then(()=> this.getBooks())
 }
 
   render() {

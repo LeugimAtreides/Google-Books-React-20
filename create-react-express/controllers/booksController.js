@@ -16,9 +16,12 @@ module.exports = {
       .catch(err => res.status(422).json(err));
   },
   create: function(req, res) {
+    // console.log("Req.body in controller ", req.body)
     db.Book
       .create(req.body)
-      .then(dbModel => res.json(dbModel))
+      .then(dbModel => {
+        console.log("This is the DB Model", dbModel)
+        res.json(dbModel)})
       .catch(err => res.status(422).json(err));
   },
   update: function(req, res) {
