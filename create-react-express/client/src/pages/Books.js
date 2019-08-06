@@ -1,36 +1,19 @@
 import React, { Component } from "react";
-import DeleteBtn from "../components/DeleteBtn";
 import Jumbotron from "../components/Jumbotron";
 import API from "../utils/API";
 import { Link } from "react-router-dom";
+import Button from "../components/Button";
 import { Col, Row, Container } from "../components/Grid";
-import { List, ListItem } from "../components/List";
-import { Input, TextArea, FormBtn } from "../components/Form";
+import {
+  GoogleBookList,
+  GoogleBookListItem
+} from "../components/GoogleBooksList";
+import { Input } from "../components/Form";
 
 class Books extends Component {
   state = {
     books: [],
-    title: "",
-    author: "",
-    synopsis: ""
-  };
-
-  componentDidMount() {
-    this.loadBooks();
-  }
-
-  loadBooks = () => {
-    API.getBooks()
-      .then(res =>
-        this.setState({ books: res.data, title: "", author: "", synopsis: "" })
-      )
-      .catch(err => console.log(err));
-  };
-
-  deleteBook = id => {
-    API.deleteBook(id)
-      .then(res => this.loadBooks())
-      .catch(err => console.log(err));
+    bookSearch: ""
   };
 
   handleInputChange = event => {
@@ -40,74 +23,114 @@ class Books extends Component {
     });
   };
 
-  handleFormSubmit = event => {
-    event.preventDefault();
-    if (this.state.title && this.state.author) {
-      API.saveBook({
-        title: this.state.title,
-        author: this.state.author,
-        synopsis: this.state.synopsis
+  
+  getBooks = () => {
+    API.getGoogleBooks(this.state.bookSearch)
+    .then(res => {
+      console.log(res.data);
+       this.setState({ books: res.data }, () => {
+      console.log(this.state.books)
+      console.log(this.state.books.title)
       })
-        .then(res => this.loadBooks())
-        .catch(err => console.log(err));
-    }
+    })
+    // .then(function(res) {
+    //   console.log(res.data)
+    //   this.setState({ books: res.data })
+    //   console.log(this.state.books);
+    // })
+    .catch(()=> {
+      this.setState({ books: [] })
+    });
+  }
+  handleFormSubmit = event => {
+    // When the form is submitted, prevent its default behavior, get books update the books state
+    event.preventDefault();
+    this.getBooks();
+    // console.log(this.state.books)
   };
+
+handleBookSave = id => {
+  const book = this.state.books.find(book => book.id === id);
+
+  API.saveBook({
+    googleId: book.id,
+    title: book.volumeInfo.title,
+    link: book.volumeInfo.infoLink,
+    authors: book.volumeInfo.authors,
+    description: book.volumeInfo.description,
+    image: book.volumeInfo.imageLinks.thumbnail
+  })
+}
 
   render() {
     return (
       <Container fluid>
         <Row>
-          <Col size="md-6">
+          <Col size="md-12">
             <Jumbotron>
-              <h1>What Books Should I Read?</h1>
+              <h1>Search For Any Book To Read!</h1>
             </Jumbotron>
             <form>
-              <Input
-                value={this.state.title}
-                onChange={this.handleInputChange}
-                name="title"
-                placeholder="Title (required)"
-              />
-              <Input
-                value={this.state.author}
-                onChange={this.handleInputChange}
-                name="author"
-                placeholder="Author (required)"
-              />
-              <TextArea
-                value={this.state.synopsis}
-                onChange={this.handleInputChange}
-                name="synopsis"
-                placeholder="Synopsis (Optional)"
-              />
-              <FormBtn
-                disabled={!(this.state.author && this.state.title)}
-                onClick={this.handleFormSubmit}
-              >
-                Submit Book
-              </FormBtn>
+              <Container>
+                <Row>
+                  <Col size="xs-9 sm-10">
+                    <Input
+                      name="bookSearch"
+                      value={this.state.bookSearch}
+                      onChange={this.handleInputChange}
+                      placeholder="Search For a Book"
+                    />
+                  </Col>
+                  <Col size="xs-3 sm-2">
+                    <Button
+                      onClick={this.handleFormSubmit}
+                      type="success"
+                      className="input-md"
+                    >
+                      Search
+                    </Button>
+                  </Col>
+                </Row>
+              </Container>
             </form>
           </Col>
-          <Col size="md-6 sm-12">
-            <Jumbotron>
-              <h1>Books On My List</h1>
-            </Jumbotron>
+        </Row>
+        <Row>
+          <Col size="lg-12">
+            {console.log(this.state.books.length, this.state)}
             {this.state.books.length ? (
-              <List>
+              <GoogleBookList>
                 {this.state.books.map(book => (
-                  <ListItem key={book._id}>
-                    <Link to={"/books/" + book._id}>
-                      <strong>
-                        {book.title} by {book.author}
-                      </strong>
-                    </Link>
-                    <DeleteBtn onClick={() => this.deleteBook(book._id)} />
-                  </ListItem>
-                ))}
-              </List>
+                    <GoogleBookListItem
+                      key={book.id}
+                      title={book.volumeInfo.title}
+                      href={book.volumeInfo.infoLink}
+                      author={book.volumeInfo.authors.join(", ")}
+                      description={book.volumeInfo.description}
+                      thumbnail={book.volumeInfo.imageLinks.thumbnail}
+                    >
+                      <Col size="xs-3 sm-2">
+                        <Button
+                          onClick={() => this.handleSaveBook(book.id)}
+                          type="success"
+                          className="input-lg"
+                        >
+                          Save
+                        </Button>
+                      </Col>
+                    </GoogleBookListItem>
+                  ))}
+              </GoogleBookList>
             ) : (
-              <h3>No Results to Display</h3>
+              <h1 className="text-center">No Books to Display</h1>
             )}
+          </Col>
+        </Row>
+        <Row className="text-center">
+          <Col size="lg-12" className="text-center">
+            <Link className="text-center" to="/mybooks">
+              Check Out Your Saved Books
+            </Link>
           </Col>
         </Row>
       </Container>
