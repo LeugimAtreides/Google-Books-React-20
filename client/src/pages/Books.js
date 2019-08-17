@@ -105,7 +105,7 @@ handleBookSave = id => {
                       key={book.id}
                       title={book.volumeInfo.title}
                       href={book.volumeInfo.infoLink}
-                      author={book.volumeInfo.authors.join(", ")}
+                      authors={book.volumeInfo.authors.join(", ")}
                       description={book.volumeInfo.description}
                       thumbnail={book.volumeInfo.imageLinks.thumbnail}
                     >
